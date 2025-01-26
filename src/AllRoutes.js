@@ -23,7 +23,10 @@ const AppRoutes = () => {
 
   return (
     <>
-      <Header title={getTitle()} /> {/* Set the title based on the current path */}
+      {/* Conditionally render Header based on the current path */}
+      {location.pathname !== '/login' && location.pathname !== '/signup' && (
+        <Header title={getTitle()} />
+      )}
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
