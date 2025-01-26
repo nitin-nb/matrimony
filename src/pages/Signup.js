@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button, Divider, MenuItem, Grid, Paper, Typography } from '@mui/material';
+import { Box, TextField, Button, Divider, MenuItem, Grid, Paper, Typography, InputAdornment, IconButton } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material'; // Import icons for visibility toggle
 import signupImage from '../assets/signup2.jpeg'; // Make sure to replace with your actual image path
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
+import 'react-toastify/dist/ReactToastify.css'; // Import CSS for toast
 
 const Signup = () => {
+  const navigate = useNavigate(); // Initialize navigate
+
   // State for form fields
   const [formData, setFormData] = useState({
-    createdBy: '',
+    name: '',
     phoneNumber: '',
     email: '',
+    password: '',
+    confirmPassword: '', // Added confirmation password field
     address: '',
     dob: '',
     height: '',
@@ -20,6 +28,9 @@ const Signup = () => {
     annualIncome: '',
     workingSector: '',
   });
+
+  const [showPassword, setShowPassword] = useState(false); // State for password visibility
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State for confirm password visibility
 
   // Sample options for dropdowns
   const createdByOptions = ['User', 'Admin'];
@@ -36,8 +47,23 @@ const Signup = () => {
 
   // Handle form submission
   const handleSubmit = () => {
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match!');
+      return;
+    }
+
+    // Store user data in local storage
+    localStorage.setItem('userProfile', JSON.stringify(formData));
+
     console.log('Form Data:', formData);
-    // Add your form submission logic here
+    const jsonData = JSON.stringify(formData);
+    console.log('Profile created:', jsonData);
+    
+    toast.success('Profile created successfully! Redirecting to login...');
+
+    setTimeout(() => {
+      navigate('/login');
+    }, 2000);
   };
 
   return (
@@ -74,6 +100,18 @@ const Signup = () => {
           </Typography>
         </Box>
 
+        {/* Back to Login Button */}
+        <Box sx={{ textAlign: 'center', marginTop: 2 }}>
+          <Button // Back to Login button
+            variant="contained" // Same style as Submit button
+            color="primary" // Same color as Submit button
+            onClick={() => navigate('/login')} // Navigate to login page
+            sx={{ width: '200px', marginBottom: 2, fontWeight: 600 }} // Added fontWeight
+          >
+            Back to Login
+          </Button>
+        </Box>
+
         <Box sx={{ padding: 3 }}>
           <Grid container spacing={2}>
             {/* General Information Section */}
@@ -83,23 +121,15 @@ const Signup = () => {
               </Typography>
               <Divider sx={{ marginBottom: 2 }} />
               <TextField
-                select
-                name="createdBy"
-                value={formData.createdBy}
+                name="name"
+                value={formData.name}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                label="Profile Created By"
+                label="Name"
                 InputLabelProps={{ style: { color: '#005f4b' } }}
-              >
-                <MenuItem value="" disabled>Select an option</MenuItem>
-                {createdByOptions.map((option) => (
-                  <MenuItem key={option} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </TextField>
+              />
 
               <TextField
                 name="phoneNumber"
@@ -122,6 +152,44 @@ const Signup = () => {
                 variant="outlined"
                 label="Email"
                 InputLabelProps={{ style: { color: '#005f4b' } }}
+              />
+
+              <TextField
+                type={showPassword ? 'text' : 'password'} // Toggle password visibility
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                label="Password"
+                InputLabelProps={{ style: { color: '#005f4b' } }}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  ),
+                }}
+              />
+
+              <TextField
+                type={showConfirmPassword ? 'text' : 'password'} // Toggle confirm password visibility
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                label="Confirm Password"
+                InputLabelProps={{ style: { color: '#005f4b' } }}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton onClick={() => setShowConfirmPassword(!showConfirmPassword)} edge="end">
+                      {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  ),
+                }}
               />
 
               <TextField
@@ -182,7 +250,7 @@ const Signup = () => {
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                label="Height"
+                label="Height (cm)"
                 InputLabelProps={{ style: { color: '#005f4b' } }}
               />
 
@@ -326,14 +394,15 @@ const Signup = () => {
             </Grid>
           </Grid>
 
-          {/* Submit Button */}
+          {/* Button Section */}
           <Box sx={{ textAlign: 'center', marginTop: 4 }}>
-            <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ width: '200px' }}>
+            <Button variant="contained" color="primary" onClick={handleSubmit} sx={{ width: '200px', fontWeight: 600 }}>
               Submit
             </Button>
           </Box>
         </Box>
       </Paper>
+      <ToastContainer /> {/* Add ToastContainer to render toast notifications */}
     </Box>
   );
 };

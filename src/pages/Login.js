@@ -1,14 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, TextField, Button, Typography, Divider } from '@mui/material';
 import { Google as GoogleIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import loginBG from '../assets/4.jpg';
 
 const Login = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleSignUpClick = () => {
     navigate('/register');
+  };
+
+  const handleLogin = () => {
+    const userProfile = JSON.parse(localStorage.getItem('userProfile')); // Retrieve user data from local storage
+    if (userProfile && userProfile.email === email && userProfile.password === password) {
+      // If credentials match, redirect to dashboard
+      navigate('/dashboard');
+    } else {
+      // Show error message using toast
+      toast.error('Invalid email or password!'); // Replace alert with toast notification
+    }
   };
 
   return (
@@ -53,16 +68,8 @@ const Login = () => {
               },
             },
           }}
-          InputProps={{
-            sx: {
-              '& input::placeholder': {
-                color: '#005f4b',
-              },
-              '& input:focus::placeholder': {
-                color: '#005f4b',
-              },
-            },
-          }}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)} // Update email state
         />
         <TextField
           label="Password"
@@ -80,16 +87,8 @@ const Login = () => {
               },
             },
           }}
-          InputProps={{
-            sx: {
-              '& input::placeholder': {
-                color: '#005f4b',
-              },
-              '& input:focus::placeholder': {
-                color: '#005f4b',
-              },
-            },
-          }}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)} // Update password state
         />
         <Button
           variant="contained"
@@ -103,6 +102,7 @@ const Login = () => {
             fontWeight: 'bold',
           }}
           fullWidth
+          onClick={handleLogin} // Call handleLogin on button click
         >
           Login
         </Button>
@@ -128,8 +128,9 @@ const Login = () => {
           </Typography>
         </Typography>
       </Box>
+      <ToastContainer />
     </Box>
   );
 };
-  
+
 export default Login;
