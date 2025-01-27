@@ -27,6 +27,11 @@ const Signup = () => {
     occupation: '',
     annualIncome: '',
     workingSector: '',
+    caste: '', // New field for caste
+    horoscope: '', // New field for horoscope
+    star: '', // New field for star
+    workLocation: '', // New field for work location
+    familyMembers: '', // New field for family members
   });
 
   const [showPassword, setShowPassword] = useState(false); // State for password visibility
@@ -52,7 +57,7 @@ const Signup = () => {
       return;
     }
 
-    // Store user data in local storage
+    // Store user data in local storage as JSON
     localStorage.setItem('userProfile', JSON.stringify(formData));
 
     console.log('Form Data:', formData);
@@ -218,6 +223,17 @@ const Signup = () => {
               >
                 <MenuItem value="India">India</MenuItem>
               </TextField>
+              
+              <TextField
+                name="workLocation"
+                value={formData.workLocation}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                label="Work Location"
+                InputLabelProps={{ style: { color: '#005f4b' } }}
+              />
             </Grid>
 
             {/* Personal Details Section */}
@@ -304,23 +320,48 @@ const Signup = () => {
               />
 
               <TextField
-                select
-                name="maritalStatus"
-                value={formData.maritalStatus}
+                name="caste"
+                value={formData.caste}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
                 variant="outlined"
-                label="Marital Status"
+                label="Caste"
                 InputLabelProps={{ style: { color: '#005f4b' } }}
-              >
-                <MenuItem value="" disabled>Select your marital status</MenuItem>
-                {maritalStatus.map((status) => (
-                  <MenuItem key={status} value={status}>
-                    {status}
-                  </MenuItem>
-                ))}
-              </TextField>
+              />
+
+              <TextField
+                name="horoscope"
+                value={formData.horoscope}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                label="Horoscope"
+                InputLabelProps={{ style: { color: '#005f4b' } }}
+              />
+
+              <TextField
+                name="star"
+                value={formData.star}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                label="Star"
+                InputLabelProps={{ style: { color: '#005f4b' } }}
+              />
+
+              <TextField
+                name="familyMembers"
+                value={formData.familyMembers}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                variant="outlined"
+                label="Family Members"
+                InputLabelProps={{ style: { color: '#005f4b' } }}
+              />
             </Grid>
 
             {/* Professional Details Section */}

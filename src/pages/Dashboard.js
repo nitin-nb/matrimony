@@ -227,7 +227,7 @@ const Dashboard = () => {
           align="center"
           sx={{ fontWeight: "bold", color: "#005f4b" }}
         >
-          Matrimony Profiles
+          Profiles
         </Typography>
 
         {/* Filters Section */}

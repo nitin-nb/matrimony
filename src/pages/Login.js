@@ -11,19 +11,38 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  // Predefined credentials
+  const predefinedEmail = 'boss@gmail.com';
+  const predefinedPassword = 'Boss@1234';
+
   const handleSignUpClick = () => {
     navigate('/register');
   };
 
   const handleLogin = () => {
-    const userProfile = JSON.parse(localStorage.getItem('userProfile')); // Retrieve user data from local storage
-    if (userProfile && userProfile.email === email && userProfile.password === password) {
-      // If credentials match, redirect to dashboard
-      navigate('/dashboard');
-    } else {
-      // Show error message using toast
-      toast.error('Invalid email or password!'); // Replace alert with toast notification
+    // Check against predefined credentials
+    if (email === predefinedEmail && password === predefinedPassword) {
+      toast.success('Login successful! Redirecting...');
+      setTimeout(() => {
+        navigate('/dashboard'); // Redirect to dashboard or desired page
+      }, 2000);
+      return;
     }
+
+    // Check against registered users in local storage
+    const userProfile = JSON.parse(localStorage.getItem('userProfile'));
+    if (userProfile) {
+      if (email === userProfile.email && password === userProfile.password) {
+        toast.success('Login successful! Redirecting...');
+        setTimeout(() => {
+          navigate('/dashboard'); // Redirect to dashboard or desired page
+        }, 2000);
+        return;
+      }
+    }
+
+    // If login fails
+    toast.error('Invalid email or password!');
   };
 
   return (
