@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, TextField, Button, Typography, Divider } from '@mui/material';
 import { Google as GoogleIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -15,11 +15,25 @@ const Login = () => {
   const predefinedEmail = 'boss@gmail.com';
   const predefinedPassword = 'Boss@1234';
 
+  // Initialize local storage with default credentials if not already set
+  useEffect(() => {
+    const userProfile = JSON.parse(localStorage.getItem('userProfile'));
+    if (!userProfile) {
+      const defaultProfile = {
+        email: predefinedEmail,
+        password: predefinedPassword,
+      };
+      localStorage.setItem('userProfile', JSON.stringify(defaultProfile));
+    }
+  }, []);
+
   const handleSignUpClick = () => {
     navigate('/register');
   };
 
   const handleLogin = () => {
+    console.log('Attempting to log in with:', email, password); // Debugging log
+
     // Check against predefined credentials
     if (email === predefinedEmail && password === predefinedPassword) {
       toast.success('Login successful! Redirecting...');
@@ -32,6 +46,7 @@ const Login = () => {
     // Check against registered users in local storage
     const userProfile = JSON.parse(localStorage.getItem('userProfile'));
     if (userProfile) {
+      console.log('User profile found in local storage:', userProfile); // Debugging log
       if (email === userProfile.email && password === userProfile.password) {
         toast.success('Login successful! Redirecting...');
         setTimeout(() => {

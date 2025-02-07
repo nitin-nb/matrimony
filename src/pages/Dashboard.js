@@ -23,6 +23,11 @@ import img2 from "../assets/profiles/Matrimonial-Suited-Groom-04.jpg";
 import img3 from "../assets/profiles/Matrimonial-Suited-Groom-05.jpg";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
+import { styled } from '@mui/system';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import WorkIcon from '@mui/icons-material/Work';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 
 const profiles = [
   {
@@ -33,6 +38,7 @@ const profiles = [
     religion: "Christian",
     occupation: "Engineer",
     image: img1,
+    premium: true,
   },
   {
     id: 2,
@@ -42,6 +48,7 @@ const profiles = [
     religion: "Hindu",
     occupation: "Doctor",
     image: img2,
+    premium: false,
   },
   {
     id: 3,
@@ -51,6 +58,7 @@ const profiles = [
     religion: "Muslim",
     occupation: "Lawyer",
     image: img3,
+    premium: true,
   },
   {
     id: 4,
@@ -59,6 +67,7 @@ const profiles = [
     location: "San Francisco",
     religion: "Christian",
     image: img1,
+    premium: true,
   },
   {
     id: 5,
@@ -67,6 +76,7 @@ const profiles = [
     location: "Miami",
     religion: "Hindu",
     image: img2,
+    premium: false,
   },
   {
     id: 6,
@@ -75,6 +85,7 @@ const profiles = [
     location: "Seattle",
     religion: "Muslim",
     image: img3,
+    premium: true,
   },
   {
     id: 7,
@@ -83,6 +94,7 @@ const profiles = [
     location: "Austin",
     religion: "Christian",
     image: img1,
+    premium: false,
   },
   {
     id: 8,
@@ -91,6 +103,7 @@ const profiles = [
     location: "Boston",
     religion: "Hindu",
     image: img2,
+    premium: true,
   },
   {
     id: 9,
@@ -99,6 +112,7 @@ const profiles = [
     location: "Denver",
     religion: "Muslim",
     image: img3,
+    premium: false,
   },
   {
     id: 10,
@@ -107,6 +121,7 @@ const profiles = [
     location: "Phoenix",
     religion: "Christian",
     image: img1,
+    premium: true,
   },
   {
     id: 11,
@@ -115,6 +130,7 @@ const profiles = [
     location: "Las Vegas",
     religion: "Hindu",
     image: img2,
+    premium: false,
   },
   {
     id: 12,
@@ -123,6 +139,7 @@ const profiles = [
     location: "Atlanta",
     religion: "Muslim",
     image: img3,
+    premium: true,
   },
   {
     id: 13,
@@ -131,6 +148,7 @@ const profiles = [
     location: "Philadelphia",
     religion: "Christian",
     image: img1,
+    premium: false,
   },
   {
     id: 14,
@@ -139,6 +157,7 @@ const profiles = [
     location: "Dallas",
     religion: "Hindu",
     image: img2,
+    premium: true,
   },
   {
     id: 15,
@@ -147,6 +166,7 @@ const profiles = [
     location: "San Diego",
     religion: "Muslim",
     image: img3,
+    premium: false,
   },
   {
     id: 16,
@@ -155,6 +175,7 @@ const profiles = [
     location: "Orlando",
     religion: "Christian",
     image: img1,
+    premium: true,
   },
 ];
 
@@ -168,10 +189,64 @@ const ageRanges = [
   { label: "76-100", value: [76, 100] },
 ];
 
+// Styled Card
+const StyledCard = styled(Card)(({ theme }) => ({
+  backgroundColor: '#ffffff',
+  borderRadius: '12px',
+  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+  transition: 'transform 0.2s',
+  position: 'relative', // For positioning the wishlist button
+  '&:hover': {
+    transform: 'scale(1.05)',
+  },
+}));
+
+const ImageContainer = styled('div')({
+  width: '100%',
+  height: '200px',
+  backgroundColor: '#e0e0e0', // Placeholder background color
+  borderRadius: '12px 12px 0 0',
+  overflow: 'hidden',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+
+const Badge = styled('span')({
+  backgroundColor: '#00624F',
+  color: 'white',
+  padding: '4px 8px',
+  borderRadius: '12px',
+  fontSize: '0.8rem',
+  marginLeft: '8px', // Space between name and badge
+});
+
+const ProfileImage = styled('img')({
+  width: '100%',
+  height: '100%',
+  objectFit: 'contain', // Change to contain to show faces correctly
+});
+
+// Styled Filter Container
+const FilterContainer = styled(Box)({
+  display: 'flex',
+  marginBottom: '20px', // Add margin below the filter container
+  padding: '10px', // Add padding to the filter container
+});
+
+const StyledFormControl = styled(FormControl)({
+  minWidth: 120,
+  backgroundColor: 'white', // Set background color to white
+  marginRight: '10px', // Add some space between dropdowns
+});
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const profilesPerPage = 10;
+
+  // State for wishlist icon
+  const [wishlist, setWishlist] = useState({}); // Object to track wishlist status for each profile
 
   const indexOfLastProfile = currentPage * profilesPerPage;
   const indexOfFirstProfile = indexOfLastProfile - profilesPerPage;
@@ -205,8 +280,15 @@ const Dashboard = () => {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  const handleCardClick = (user) => {
-    navigate('/profileDetails', { state: { user } }); // Navigate to ProfileDetails with user data
+  const handleCardClick = (profile) => {
+    navigate('/profileDetails', { state: { profile } }); // Navigate to ProfileDetails with profile data
+  };
+
+  const handleWishlistClick = (profileId) => {
+    setWishlist((prev) => ({
+      ...prev,
+      [profileId]: !prev[profileId], // Toggle the wishlist status
+    }));
   };
 
   useEffect(() => {
@@ -218,179 +300,87 @@ const Dashboard = () => {
   }, [navigate]);
 
   return (
-    <Box sx={{ minHeight: "100vh" }}>
-
-      <Box sx={{ padding: 4, backgroundColor: "#f5f5f5" }}>
-        <Typography
-          variant="h4"
-          gutterBottom
-          align="center"
-          sx={{ fontWeight: "bold", color: "#005f4b" }}
-        >
-          Profiles
-        </Typography>
-
-        {/* Filters Section */}
-        <Box
-          sx={{
-            marginBottom: 4,
-            display: "flex",
-            alignItems: "center",
-          }}
-        >
-          <FormControl sx={{ minWidth: 120, marginRight: 2 }}>
-            <InputLabel sx={{ color: "#005f4b" }} shrink={!!selectedReligion}>Religion</InputLabel>
-            <TextField
-              value={selectedReligion}
-              onChange={(e) => setSelectedReligion(e.target.value)}
-              select
-              variant="outlined"
-              sx={{ backgroundColor: "#fff9c4" }}
-              SelectProps={{
-                MenuProps: {
-                  PaperProps: {
-                    style: {
-                      maxHeight: 200,
-                      width: 250,
-                    },
-                  },
-                },
-              }}
-            >
-              <MenuItem value="Christian">Christian</MenuItem>
-              <MenuItem value="Hindu">Hindu</MenuItem>
-              <MenuItem value="Muslim">Muslim</MenuItem>
-            </TextField>
-          </FormControl>
-          <FormControl sx={{ minWidth: 120, marginRight: 2 }}>
-            <InputLabel sx={{ color: "#005f4b" }} shrink={!!selectedLocation}>Location</InputLabel>
-            <TextField
-              value={selectedLocation}
-              onChange={(e) => setSelectedLocation(e.target.value)}
-              select
-              sx={{ backgroundColor: "#fff9c4" }}
-              SelectProps={{
-                MenuProps: {
-                  PaperProps: {
-                    style: {
-                      maxHeight: 200,
-                      width: 250,
-                    },
-                  },
-                },
-              }}
-            >
-              <MenuItem value="New York">New York</MenuItem>
-              <MenuItem value="Los Angeles">Los Angeles</MenuItem>
-              <MenuItem value="Chicago">Chicago</MenuItem>
-            </TextField>
-          </FormControl>
-          <FormControl sx={{ minWidth: 130, marginRight: 2 }}>
-            <InputLabel sx={{ color: "#005f4b" }} shrink={!!selectedOccupation}>Occupation</InputLabel>
-            <TextField
-              value={selectedOccupation}
-              onChange={(e) => setSelectedOccupation(e.target.value)}
-              select
-              sx={{ backgroundColor: "#fff9c4" }}
-              SelectProps={{
-                MenuProps: {
-                  PaperProps: {
-                    style: {
-                      maxHeight: 200,
-                      width: 250,
-                    },
-                  },
-                },
-              }}
-            >
-              <MenuItem value="Engineer">Engineer</MenuItem>
-              <MenuItem value="Doctor">Doctor</MenuItem>
-              <MenuItem value="Lawyer">Lawyer</MenuItem>
-            </TextField>
-          </FormControl>
-        </Box>
-
-        {/* Display Selected Filters */}
-        <Box sx={{ marginBottom: 4 }}>
-          <Typography variant="h6">Selected Filters:</Typography>
-          <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-            {selectedReligion && <Chip label={`Religion: ${selectedReligion}`} onDelete={() => setSelectedReligion('')} />}
-            {selectedLocation && <Chip label={`Location: ${selectedLocation}`} onDelete={() => setSelectedLocation('')} />}
-            {selectedOccupation && <Chip label={`Occupation: ${selectedOccupation}`} onDelete={() => setSelectedOccupation('')} />}
-          </Box>
-        </Box>
-
-        <Grid container spacing={4}>
-          {currentProfiles.map((profile) => (
-            <Grid item xs={12} sm={6} md={3} key={profile.id}>
-              <Card
-                sx={{
-                  padding: 2,
-                  backgroundColor: "#fff9c4",
-                  transition: "0.3s",
-                  "&:hover": { boxShadow: 20 },
-                }}
-                onClick={() => handleCardClick(profile)}
-              >
-                <div
-                  style={{
-                    width: "100%",
-                    height: "200px",
-                    background: "linear-gradient(to bottom, #d3d3d3, #a9a9a9)",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
+    <Box sx={{ padding: 4, backgroundColor: '#FDF0D7', minHeight: '100vh' }}>
+      <FilterContainer>
+        <StyledFormControl variant="outlined" size="small">
+          <Select defaultValue="18-25">
+            <MenuItem value="18-25">Age: 18-25</MenuItem>
+            <MenuItem value="26-35">Age: 26-35</MenuItem>
+            <MenuItem value="36-45">Age: 36-45</MenuItem>
+            <MenuItem value="46+">Age: 46+</MenuItem>
+          </Select>
+        </StyledFormControl>
+        <StyledFormControl variant="outlined" size="small">
+          <Select defaultValue="All">
+            <MenuItem value="All">Location: All</MenuItem>
+            <MenuItem value="USA">Location: USA</MenuItem>
+            <MenuItem value="UK">Location: UK</MenuItem>
+            <MenuItem value="Canada">Location: Canada</MenuItem>
+          </Select>
+        </StyledFormControl>
+        <StyledFormControl variant="outlined" size="small">
+          <Select defaultValue="All">
+            <MenuItem value="All">Religion: All</MenuItem>
+            <MenuItem value="Christianity">Religion: Christianity</MenuItem>
+            <MenuItem value="Islam">Religion: Islam</MenuItem>
+            <MenuItem value="Hinduism">Religion: Hinduism</MenuItem>
+          </Select>
+        </StyledFormControl>
+      </FilterContainer>
+      <Grid container spacing={4}>
+        {currentProfiles.map((profile, index) => (
+          <Grid item xs={12} sm={6} md={3} key={index}>
+            <StyledCard onClick={() => handleCardClick(profile)}>
+              <ImageContainer>
+                <ProfileImage
+                  src={profile.image}
+                  alt={profile.name}
+                />
+                <IconButton
+                  sx={{ position: 'absolute', top: 8, right: 8, color: wishlist[profile.id] ? '#FF4081' : '#000' }}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent card click event
+                    handleWishlistClick(profile.id);
                   }}
                 >
-                  <img
-                    src={profile.image}
-                    alt={profile.name}
-                    style={{
-                      maxHeight: "100%",
-                      maxWidth: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                </div>
-                <CardContent>
-                  <Typography variant="h5" sx={{ fontWeight: "bold", color: "#005f4b" }}>
-                    {profile.name}
-                  </Typography>
-                  <Typography>Age: {profile.age}</Typography>
-                  <Typography>Location: {profile.location}</Typography>
-                  <Typography>Religion: {profile.religion}</Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-        <Box sx={{ textAlign: "center", marginTop: 4 }}>
-          <Button
-            onClick={() => paginate(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </Button>
-          <Button
-            onClick={() => paginate(currentPage + 1)}
-            disabled={indexOfLastProfile >= filteredProfiles.length}
-          >
-            Next
-          </Button>
-        </Box>
-        {/* <Box sx={{ textAlign: "center", marginTop: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            Want to see more profiles?
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            href="/subscribe"
-            sx={{ padding: "10px 20px", fontSize: "16px" }}
-          >
-            Subscribe to Premium
-          </Button>
-        </Box> */}
+                  <FavoriteIcon color={wishlist[profile.id] ? 'error' : 'inherit'} />
+                </IconButton>
+              </ImageContainer>
+              <CardContent>
+                <Typography variant="h5" color="#00624F" fontWeight="bold" sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  {profile.name}
+                  {profile.premium && <Badge>Premium</Badge>}
+                </Typography>
+                <Typography variant="body1" color="#4B5563" sx={{ display: 'flex', alignItems: 'center' }}>
+                  <CalendarTodayIcon fontSize="small" sx={{ marginRight: 1, color: '#4B5563' }} /> {profile.age} years
+                </Typography>
+                <Typography variant="body1" color="#4B5563" sx={{ display: 'flex', alignItems: 'center' }}>
+                  <LocationOnIcon fontSize="small" sx={{ marginRight: 1, color: '#4B5563' }} /> {profile.location}
+                </Typography>
+                <Typography variant="body1" color="#4B5563" sx={{ display: 'flex', alignItems: 'center' }}>
+                  <WorkIcon fontSize="small" sx={{ marginRight: 1, color: '#4B5563' }} /> {profile.occupation}
+                </Typography>
+                <Button variant="contained" color="primary" fullWidth sx={{ marginTop: 2, fontWeight: 'bold', color: '#00624F' }}>
+                  View Profile
+                </Button>
+              </CardContent>
+            </StyledCard>
+          </Grid>
+        ))}
+      </Grid>
+      <Box sx={{ textAlign: "center", marginTop: 4 }}>
+        <Button
+          onClick={() => paginate(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </Button>
+        <Button
+          onClick={() => paginate(currentPage + 1)}
+          disabled={indexOfLastProfile >= filteredProfiles.length}
+        >
+          Next
+        </Button>
       </Box>
     </Box>
   );
